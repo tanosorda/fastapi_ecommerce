@@ -1,6 +1,6 @@
 from sqlalchemy import select
-from db.session import async_session
-from models.product import Product
+from app.db.session import async_session
+from app.models.product import Product
 
 class ProductRepository:
     @staticmethod

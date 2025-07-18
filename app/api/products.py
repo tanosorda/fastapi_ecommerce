@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from db.repository import ProductRepository
-from schemas.product import ProductCreate, ProductResponse
+from app.db.repository import ProductRepository
+from app.schemas.product import ProductCreate, ProductResponse
 
 router = APIRouter(prefix="/products", tags=["Products"])
 

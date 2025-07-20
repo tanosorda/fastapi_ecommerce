@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 
-class ProductCreate(BaseModel):
-    name: str
-    price: float
-    description: str | None = None
-
-class ProductResponse(ProductCreate):
+class ProductRead(BaseModel):
     id: int
+    name: str
+    description: str | None
+    price: float
+    image_url: str
+    category_id: int
 
     class Config:
-        from_attributes = True  # Для совместимости с SQLAlchemy
+        orm_mode = True

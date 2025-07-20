@@ -1,8 +1,11 @@
-from aiogram import Router, types
-from aiogram.filters import Command
+from aiogram import Dispatcher, types
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-router = Router()
+async def cmd_start(message: types.Message):
+    kb = ReplyKeyboardMarkup(resize_keyboard=True)
+    kb.add(KeyboardButton('📦 Каталог'))
+    await message.answer('Добро пожаловать! Выберите действие:', reply_markup=kb)
 
-@router.message(Command("start"))
-async def start_cmd(message: types.Message):
-    await message.answer("Добро пожаловать в магазин биодобавок!")
+
+def register(dp: Dispatcher):
+    dp.register_message_handler(cmd_start, commands=['start'])

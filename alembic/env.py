@@ -1,50 +1,56 @@
 import os
 import sys
-import asyncio
 from logging.config import fileConfig
 from alembic import context
-from dotenv import load_dotenv
 
-# 🔁 Сначала грузим переменные окружения и sys.path
-load_dotenv()
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from app.db.database import Base
+from app.models.models import *  # Импорт всех моделей
 
-# ⬇️ Только теперь можно импортировать своё приложение
-from app.db.database import Base, engine
-from app.models import models  # Убедись, что здесь есть твои SQLAlchemy-модели
-
-# Alembic config
 config = context.config
 fileConfig(config.config_file_name)
 
-# Преобразуем asyncpg URI в sync
-raw = os.getenv("POSTGRES_URL")
-if not raw:
-    raise RuntimeError("POSTGRES_URL is not set in .env")
-sync_url = raw.replace("+asyncpg", "")
-config.set_main_option("sqlalchemy.url", sync_url)
-
-# Мета-информация для Alembic
 target_metadata = Base.metadata
 
-def do_run_migrations(connection):
+def run_migrations_offline():
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        connection=connection,
+        url=url,
         target_metadata=target_metadata,
-        compare_type=True,
-        compare_server_default=True,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
     )
-
     with context.begin_transaction():
         context.run_migrations()
 
-async def run_async_migrations():
-    async with engine.begin() as conn:
-        await conn.run_sync(do_run_migrations)
-
 def run_migrations_online():
-    asyncio.run(run_async_migrations())
+    from app.db.database import engine
+    connectable = engine
 
-# 🚀 Запуск миграции
-run_migrations_online()
+    if connectable.is_async:
+        from sqlalchemy.ext.asyncio import async_engine_from_config
+        connectable = async_engine_from_config(
+            config.get_section(config.config_ini_section),
+            prefix="sqlalchemy.",
+        )
+
+    if connectable.is_async:
+        async def run_async_migrations():
+            async with connectable.connect() as connection:
+                await connection.run_sync(do_run_migrations)
+        import asyncio
+        asyncio.run(run_async_migrations())
+    else:
+        with connectable.connect() as connection:
+            do_run_migrations(connection)
+
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
+    with context.begin_transaction():
+        context.run_migrations()
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()

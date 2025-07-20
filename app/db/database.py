@@ -28,6 +28,6 @@ async def check_db_exists():
         return False
 
 async def create_database():
-    from app.models import Base
+    from app.models.models import Base
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

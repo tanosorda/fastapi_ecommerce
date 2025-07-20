@@ -30,7 +30,7 @@ async def create_initial_data():
             product = Product(
                 name=fake.unique.word().capitalize() + " Product",
                 description=fake.text(),
-                price=round(random.uniform(10, 1000),
+                price=round(random.uniform(10, 1000)),
                 category_id=random.choice([c.id for c in categories])
             )
             db.add(product)

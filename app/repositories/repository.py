@@ -1,7 +1,10 @@
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload, joinedload
-from app import models, schemas
+from app.models import models
+from app.schemas import schemas
 from datetime import datetime
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 # Category operations
 async def get_category(db, category_id: int):

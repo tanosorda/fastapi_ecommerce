@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from .. import crud, schemas, database
+from app.repositories import repository
+from app.schemas import schemas
+from app.db import database
 from typing import List
 
 router = APIRouter()
@@ -10,15 +12,15 @@ async def create_category(
     category: schemas.CategoryCreate, 
     db: AsyncSession = Depends(database.get_db)
 ):
-    return await crud.create_category(db, category=category)
+    return await repository.create_category(db, category=category)
 
 @router.get("/categories/", response_model=List[schemas.CategoryWithChildren])
 async def read_root_categories(db: AsyncSession = Depends(database.get_db)):
-    return await crud.get_root_categories(db)
+    return await repository.get_root_categories(db)
 
 @router.get("/categories/{category_id}", response_model=schemas.CategoryWithChildren)
 async def read_category(category_id: int, db: AsyncSession = Depends(database.get_db)):
-    category = await crud.get_category(db, category_id)
+    category = await repository.get_category(db, category_id)
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     return category
@@ -28,4 +30,4 @@ async def read_category_products(
     category_id: int, 
     db: AsyncSession = Depends(database.get_db)
 ):
-    return await crud.get_products_by_category(db, category_id)
+    return await repository.get_products_by_category(db, category_id)

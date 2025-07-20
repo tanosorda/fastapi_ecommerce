@@ -1,6 +1,6 @@
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload, joinedload
-from . import models, schemas
+from app import models, schemas
 from datetime import datetime
 
 # Category operations

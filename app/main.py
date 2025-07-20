@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from .database import engine, Base, check_db_exists, create_database
-from .initial_data import create_initial_data
-from .routers import categories, cart, orders, support
+from app.db.database import engine, Base, check_db_exists, create_database
+from app.db.initial_data import create_initial_data
+from app.api import categories, cart, orders, support
 import asyncio
 import logging
 

@@ -1,8 +1,8 @@
 import asyncio
 import random
 from faker import Faker
-from .database import AsyncSessionLocal
-from .models import (
+from app.db.database import AsyncSessionLocal
+from app.models.models import (
     Category, Product, Cart, CartItem, 
     Order, OrderItem, SupportTicket
 )

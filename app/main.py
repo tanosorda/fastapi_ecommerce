@@ -1,7 +1,12 @@
 from fastapi import FastAPI
-from .database import engine, Base
+from .database import engine, Base, check_db_exists, create_database
+from .initial_data import create_initial_data
 from .routers import categories, cart, orders, support
 import asyncio
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -11,10 +16,23 @@ app.include_router(orders.router, prefix="/api")
 app.include_router(support.router, prefix="/api")
 
 @app.on_event("startup")
-async def init_db():
-    async with engine.begin() as conn:
-        # Для production используйте миграции вместо create_all!
-        await conn.run_sync(Base.metadata.create_all)
+async def startup_event():
+    # Проверяем существует ли БД
+    if not await check_db_exists():
+        logger.info("Database does not exist, creating...")
+        try:
+            # Создаем структуру БД
+            await create_database()
+            logger.info("Database created successfully")
+            
+            # Заполняем тестовыми данными
+            await create_initial_data()
+            logger.info("Test data generated successfully")
+        except Exception as e:
+            logger.error(f"Error during database initialization: {e}")
+            raise
+    else:
+        logger.info("Database already exists, skipping initialization")
 
 @app.get("/")
 async def read_root():

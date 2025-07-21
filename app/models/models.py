@@ -16,9 +16,19 @@ class Category(Base):
     name = Column(String(100), unique=True, index=True)
     parent_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     
-    children = relationship("Category", back_populates="parent", remote_side=[id])
-    parent = relationship("Category", back_populates="children", remote_side=[id])
+    parent = relationship(
+        "Category",
+        remote_side=[id],
+        back_populates="children",
+    )
+    children = relationship(
+        "Category",
+        back_populates="parent",
+        cascade="all, delete-orphan"
+    )
+    
     products = relationship("Product", back_populates="category")
+
 
 class Product(Base):
     __tablename__ = "products"

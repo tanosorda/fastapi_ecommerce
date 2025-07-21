@@ -1,8 +1,8 @@
 import random
 from faker import Faker
 from datetime import datetime, timedelta
+from sqlalchemy import select, exists
 
-from app.db.database import AsyncSessionLocal
 from app.models.models import (
     Category, Product, Cart, CartItem,
     Order, OrderItem, SupportTicket
@@ -11,7 +11,17 @@ from app.models.models import (
 fake = Faker()
 
 async def create_initial_data():
+    from app.db.database import AsyncSessionLocal
+    
     async with AsyncSessionLocal() as db:
+        # Проверяем, есть ли уже категории или продукты (можно добавить другие сущности)
+        category_exists = await db.execute(select(exists().where(Category.id != None)))
+        product_exists = await db.execute(select(exists().where(Product.id != None)))
+        
+        if category_exists.scalar() or product_exists.scalar():
+            # Если есть хотя бы одна запись, не создаём начальные данные
+            return
+
         # Категории
         categories = []
         for i in range(5):

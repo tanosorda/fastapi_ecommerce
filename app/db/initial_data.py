@@ -1,32 +1,31 @@
-import asyncio
 import random
 from faker import Faker
+from datetime import datetime, timedelta
+
 from app.db.database import AsyncSessionLocal
 from app.models.models import (
-    Category, Product, Cart, CartItem, 
+    Category, Product, Cart, CartItem,
     Order, OrderItem, SupportTicket
 )
-from datetime import datetime, timedelta
 
 fake = Faker()
 
 async def create_initial_data():
     async with AsyncSessionLocal() as db:
-        # Создаем категории
+        # Категории
         categories = []
         for i in range(5):
             category = Category(
                 name=fake.unique.word().capitalize() + " Category",
-                parent_id=None if i < 3 else random.choice([1, 2, 3]) if i > 2 else None
+                parent_id=None if i < 3 else random.choice([1, 2, 3])
             )
             db.add(category)
             categories.append(category)
-        
         await db.commit()
-        
-        # Создаем продукты
+
+        # Продукты
         products = []
-        for i in range(15):
+        for _ in range(15):
             product = Product(
                 name=fake.unique.word().capitalize() + " Product",
                 description=fake.text(),
@@ -35,15 +34,13 @@ async def create_initial_data():
             )
             db.add(product)
             products.append(product)
-        
         await db.commit()
-        
-        # Создаем корзины и товары в корзине
+
+        # Корзины и позиции
         for user_id in range(1, 4):
             cart = Cart(user_id=user_id)
             db.add(cart)
             await db.commit()
-            
             for _ in range(random.randint(1, 5)):
                 item = CartItem(
                     cart_id=cart.id,
@@ -51,10 +48,9 @@ async def create_initial_data():
                     quantity=random.randint(1, 5)
                 )
                 db.add(item)
-        
         await db.commit()
-        
-        # Создаем заказы
+
+        # Заказы и позиции
         for user_id in range(1, 4):
             order = Order(
                 user_id=user_id,
@@ -63,20 +59,18 @@ async def create_initial_data():
             )
             db.add(order)
             await db.commit()
-            
             for _ in range(random.randint(1, 5)):
-                product = random.choice(products)
+                prod = random.choice(products)
                 order_item = OrderItem(
                     order_id=order.id,
-                    product_id=product.id,
+                    product_id=prod.id,
                     quantity=random.randint(1, 3),
-                    price=product.price
+                    price=prod.price
                 )
                 db.add(order_item)
-        
         await db.commit()
-        
-        # Создаем тикеты поддержки
+
+        # Тикеты поддержки
         for user_id in range(1, 4):
             for _ in range(random.randint(1, 3)):
                 ticket = SupportTicket(
@@ -84,8 +78,9 @@ async def create_initial_data():
                     question=fake.sentence(),
                     answer=fake.sentence() if random.choice([True, False]) else None,
                     created_at=datetime.utcnow() - timedelta(days=random.randint(1, 15)),
-                    answered_at=datetime.utcnow() - timedelta(days=random.randint(1, 10)) if random.choice([True, False]) else None
+                    answered_at=(
+                        datetime.utcnow() - timedelta(days=random.randint(1, 10))
+                    ) if random.choice([True, False]) else None
                 )
                 db.add(ticket)
-        
         await db.commit()

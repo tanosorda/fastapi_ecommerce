@@ -30,3 +30,4 @@ inline keyboard
 fsm multi step state 
 
 
+uvicorn app.main:app --reload

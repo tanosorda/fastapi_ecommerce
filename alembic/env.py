@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 
 # Позволяет импортировать ваши модели
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from app.db.database import Base
+from app.db.base import Base
 from app.models.models import *  # noqa
 
 config = context.config

@@ -15,11 +15,11 @@ async def create_category(
 ):
     return await repository.create_category(db, category=category)
 
-@router.get("/categories/", response_model=List[schemas.CategoryWithChildren])
-async def read_root_categories(db: AsyncSession = Depends(get_db)):
-    return await repository.get_root_categories(db)
+@router.get("/categories/", response_model=List[schemas.Category])
+async def read_categories(db: AsyncSession = Depends(get_db)):
+    return await repository.get_categories(db)
 
-@router.get("/categories/{category_id}", response_model=schemas.CategoryWithChildren)
+@router.get("/categories/{category_id}", response_model=schemas.Category)
 async def read_category(category_id: int, db: AsyncSession = Depends(get_db)):
     category = await repository.get_category(db, category_id)
     if not category:

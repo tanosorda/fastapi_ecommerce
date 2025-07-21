@@ -13,15 +13,8 @@ class Category(Base):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    parent_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
-
-    parent = relationship("Category", remote_side=[id], back_populates="children")
-    children = relationship("Category", back_populates="parent", lazy="selectin")
+    
     products = relationship("Product", back_populates="category", lazy='selectin')
-
-
-
-
 
 class Product(Base):
     __tablename__ = "products"

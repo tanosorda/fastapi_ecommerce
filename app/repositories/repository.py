@@ -5,40 +5,18 @@ from app.schemas import schemas
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-from app.models import models
-from app.schemas import schemas
-from sqlalchemy.ext.asyncio import AsyncSession
-
-# DTO-преобразователь для жадно загруженных категорий
-from typing import List
-
-def category_to_dto(category: models.Category) -> schemas.CategoryWithChildren:
-    return schemas.CategoryWithChildren(
-        id=category.id,
-        name=category.name,
-        parent_id=category.parent_id,
-        children=[category_to_dto(child) for child in category.children]
-    )
-
-async def get_category(db: AsyncSession, category_id: int) -> schemas.CategoryWithChildren | None:
+async def get_categories(db: AsyncSession):
     result = await db.execute(
         select(models.Category)
-        .options(selectinload(models.Category.children))
+    )
+    return result.scalars().all()
+
+async def get_category(db: AsyncSession, category_id: int) -> schemas.Category | None:
+    result = await db.execute(
+        select(models.Category)
         .where(models.Category.id == category_id)
     )
-    category = result.scalars().first()
-    return category_to_dto(category) if category else None
-
-async def get_root_categories(db: AsyncSession) -> List[schemas.CategoryWithChildren]:
-    result = await db.execute(
-        select(models.Category)
-        .where(models.Category.parent_id == None)
-        .options(selectinload(models.Category.children))
-    )
-    categories = result.scalars().all()
-    return [category_to_dto(c) for c in categories]
+    return result.scalars().first()
 
 async def create_category(db: AsyncSession, category: schemas.CategoryCreate):
     db_category = models.Category(**category.dict())

@@ -6,22 +6,13 @@ class CategoryBase(BaseModel):
     name: str
 
 class CategoryCreate(CategoryBase):
-    parent_id: Optional[int] = None
+    pass
 
 class Category(CategoryBase):
     id: int
-    parent_id: Optional[int] = None
 
     class Config:
         orm_mode = True
-
-class CategoryWithChildren(Category):
-    children: List['CategoryWithChildren'] = []
-
-    class Config:
-        orm_mode = True
-
-CategoryWithChildren.update_forward_refs()
 
 class ProductBase(BaseModel):
     name: str

@@ -11,15 +11,17 @@ class CategoryCreate(CategoryBase):
 class Category(CategoryBase):
     id: int
     parent_id: Optional[int] = None
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class CategoryWithChildren(Category):
     children: List['CategoryWithChildren'] = []
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True
+
+CategoryWithChildren.update_forward_refs()
 
 class ProductBase(BaseModel):
     name: str
@@ -32,9 +34,9 @@ class ProductCreate(ProductBase):
 
 class Product(ProductBase):
     id: int
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class CartItemBase(BaseModel):
     product_id: int
@@ -46,9 +48,9 @@ class CartItemCreate(CartItemBase):
 class CartItem(CartItemBase):
     id: int
     product: Product
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class CartBase(BaseModel):
     user_id: int
@@ -57,9 +59,9 @@ class Cart(CartBase):
     id: int
     created_at: datetime
     items: List[CartItem] = []
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class OrderItemBase(BaseModel):
     product_id: int
@@ -69,9 +71,9 @@ class OrderItemBase(BaseModel):
 class OrderItem(OrderItemBase):
     id: int
     product: Product
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class OrderBase(BaseModel):
     user_id: int
@@ -81,9 +83,9 @@ class Order(OrderBase):
     id: int
     created_at: datetime
     items: List[OrderItem] = []
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class SupportTicketBase(BaseModel):
     question: str
@@ -97,6 +99,6 @@ class SupportTicket(SupportTicketBase):
     answer: Optional[str] = None
     created_at: datetime
     answered_at: Optional[datetime] = None
-    
+
     class Config:
-        from_attributes = True
+        orm_mode = True

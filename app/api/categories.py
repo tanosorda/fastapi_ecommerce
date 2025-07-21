@@ -4,14 +4,14 @@ from typing import List
 
 from app.repositories import repository
 from app.schemas import schemas
-from app.db.database import get_db  # ✅ правильный импорт get_db
+from app.db.database import get_db
 
 router = APIRouter(tags=["categories"])
 
 @router.post("/categories/", response_model=schemas.Category)
 async def create_category(
     category: schemas.CategoryCreate,
-    db: AsyncSession = Depends(get_db)  # ✅ корректный Depends
+    db: AsyncSession = Depends(get_db)
 ):
     return await repository.create_category(db, category=category)
 

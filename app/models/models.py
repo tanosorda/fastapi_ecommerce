@@ -11,23 +11,16 @@ class OrderStatus(str, enum.Enum):
 
 class Category(Base):
     __tablename__ = "categories"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), unique=True, index=True)
-    parent_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
-    
-    parent = relationship(
-        "Category",
-        remote_side=[id],
-        back_populates="children",
-    )
-    children = relationship(
-        "Category",
-        back_populates="parent",
-        cascade="all, delete-orphan"
-    )
-    
-    products = relationship("Product", back_populates="category")
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    parent_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
+
+    parent = relationship("Category", remote_side=[id], back_populates="children")
+    children = relationship("Category", back_populates="parent", lazy="selectin")
+    products = relationship("Product", back_populates="category", lazy='selectin')
+
+
+
 
 
 class Product(Base):
@@ -39,8 +32,8 @@ class Product(Base):
     price = Column(Float)
     category_id = Column(Integer, ForeignKey("categories.id"))
     
-    category = relationship("Category", back_populates="products")
-    cart_items = relationship("CartItem", back_populates="product")
+    category = relationship("Category", back_populates="products", lazy='selectin')
+    cart_items = relationship("CartItem", back_populates="product", lazy='selectin')
 
 class Cart(Base):
     __tablename__ = "carts"
@@ -49,7 +42,7 @@ class Cart(Base):
     user_id = Column(Integer, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    items = relationship("CartItem", back_populates="cart")
+    items = relationship("CartItem", back_populates="cart", lazy='selectin')
 
 class CartItem(Base):
     __tablename__ = "cart_items"
@@ -59,8 +52,8 @@ class CartItem(Base):
     product_id = Column(Integer, ForeignKey("products.id"))
     quantity = Column(Integer, default=1)
     
-    cart = relationship("Cart", back_populates="items")
-    product = relationship("Product", back_populates="cart_items")
+    cart = relationship("Cart", back_populates="items", lazy='selectin')
+    product = relationship("Product", back_populates="cart_items", lazy='selectin')
 
 class Order(Base):
     __tablename__ = "orders"
@@ -70,7 +63,7 @@ class Order(Base):
     status = Column(Enum(OrderStatus), default=OrderStatus.PENDING)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    items = relationship("OrderItem", back_populates="order")
+    items = relationship("OrderItem", back_populates="order", lazy='selectin')
 
 class OrderItem(Base):
     __tablename__ = "order_items"
@@ -81,8 +74,8 @@ class OrderItem(Base):
     quantity = Column(Integer)
     price = Column(Float)
     
-    order = relationship("Order", back_populates="items")
-    product = relationship("Product")
+    order = relationship("Order", back_populates="items", lazy='selectin')
+    product = relationship("Product", lazy='selectin')
 
 class SupportTicket(Base):
     __tablename__ = "support_tickets"

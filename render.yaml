@@ -1,0 +1,26 @@
+# render.yaml
+
+databases:
+  - name: fastapi-db # Имя базы данных (ресурса) на Render (произвольное, но запомните это имя)
+    databaseName: cbdShop # Имя базы внутри PostgreSQL (ваше приложение работает с этой БД)
+    user: postgres
+    plan: free
+
+services:
+  - type: web
+    name: fastapi-app
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    envVars:
+      - key: POSTGRES_URL
+        fromDatabase:
+          name: fastapi-db # Ссылка на имя базы из раздела databases
+          property: connectionString
+      - key: CREATE_TEST_DATA
+        value: "true"
+      - key: SECRET_KEY
+        value: "tanosorda"
+      - key: BOT_TOKEN
+        value: "7860471337:AAHHyMugrKPdT55e2-mjFXRib7iptAC44e8"

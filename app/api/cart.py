@@ -7,7 +7,7 @@ from app.schemas import schemas
 from app.db.database import get_db  # ✅ Импортируем get_db напрямую
 from app.dependencies import get_current_user_id
 
-router = APIRouter(tags=["cart"])
+router = APIRouter() 
 
 @router.get("/cart/", response_model=schemas.Cart)
 async def get_user_cart(

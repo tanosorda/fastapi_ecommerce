@@ -7,7 +7,7 @@ from app.schemas import schemas
 from app.db.database import get_db
 from app.dependencies import get_current_user_id
 
-router = APIRouter(tags=["support"])
+router = APIRouter() 
 
 @router.post("/support/", response_model=schemas.SupportTicket)
 async def create_support_ticket(

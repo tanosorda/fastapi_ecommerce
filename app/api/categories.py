@@ -6,7 +6,7 @@ from app.repositories import repository
 from app.schemas import schemas
 from app.db.database import get_db
 
-router = APIRouter(tags=["categories"])
+router = APIRouter() 
 
 @router.post("/categories/", response_model=schemas.Category)
 async def create_category(

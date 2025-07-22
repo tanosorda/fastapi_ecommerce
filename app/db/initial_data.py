@@ -99,7 +99,8 @@ async def create_initial_data(overwrite: bool = True):
         await db.commit()
 
         # Создание заказов
-        order_statuses = ["pending", "awaiting_confirmation", "completed", "cancelled"]
+        from app.models.models import OrderStatus
+        order_statuses = [status.value for status in OrderStatus]
         for user_id in range(1, 4):
             order = Order(
                 user_id=user_id,

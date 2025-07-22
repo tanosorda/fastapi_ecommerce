@@ -7,7 +7,7 @@ from app.schemas import schemas
 from app.db.database import get_db  # импорт get_db
 from app.dependencies import get_current_user_id
 
-router = APIRouter(tags=["orders"])
+router = APIRouter() 
 
 @router.post("/orders/", response_model=schemas.Order)
 async def create_order(

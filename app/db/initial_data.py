@@ -119,6 +119,7 @@ async def create_initial_data(overwrite: bool = True):
                     quantity=random.randint(1, 3),
                     price=product.price * (1 - random.uniform(0, 0.2))  # Случайная скидка до 20%
                 )
+                
                 db.add(order_item)
         await db.commit()
 

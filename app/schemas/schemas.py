@@ -12,7 +12,7 @@ class Category(CategoryBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ProductBase(BaseModel):
     name: str
@@ -27,7 +27,7 @@ class Product(ProductBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CartItemBase(BaseModel):
     product_id: int
@@ -41,7 +41,7 @@ class CartItem(CartItemBase):
     product: Product
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CartBase(BaseModel):
     user_id: int
@@ -52,7 +52,7 @@ class Cart(CartBase):
     items: List[CartItem] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class OrderItemBase(BaseModel):
     product_id: int
@@ -64,7 +64,7 @@ class OrderItem(OrderItemBase):
     product: Product
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class OrderBase(BaseModel):
     user_id: int
@@ -76,7 +76,7 @@ class Order(OrderBase):
     items: List[OrderItem] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SupportTicketBase(BaseModel):
     question: str
@@ -92,4 +92,4 @@ class SupportTicket(SupportTicketBase):
     answered_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

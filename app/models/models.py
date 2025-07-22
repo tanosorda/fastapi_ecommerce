@@ -7,7 +7,7 @@ import enum
 class OrderStatus(str, enum.Enum):
     PENDING = "pending"
     AWAITING_CONFIRMATION = "awaiting_confirmation"
-    COMPLETED = "completed"  # Добавлено новое значение
+    COMPLETED = "completed"  
     CANCELLED = "cancelled"
 
 class Category(Base):
